@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turma Tienda</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Iconos Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --color-primary: #d97706;
+      --color-primary-hover: #b45309;
+      --color-primary-light: #fef3c7;
+      --color-bg-surface: #ffffff;
+      --color-text-main: #0f172a;
+      --color-text-muted: #64748b;
+      --color-border: #ddddddd9;
+      --color-bg-page: #f8fafc;
+      --color-card-bg: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+    }
+
+    body {
+      background-color: var(--color-bg-page);
+      color: var(--color-text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    /* Enlaces / Frontends */
+    .portal-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .portal-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(95, 158, 160, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+    }
+
+    .portal-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(95, 158, 160, 0.25);
+      border-color: #ccc;
+    }
+
+    .portal-item:active {
+      transform: translateY(0);
+    }
+
+    .prod-thumb {
+      width: 27px;
+      height: 90px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--color-primary);
+    }
+
+    .prod-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+      padding: 8px 0;
+    }
+
+    .prod-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--color-text-main);
+    }
+
+    .badge-stock {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-text-muted);
+    }
+
+    .chevron {
+      margin-right: 14px;
+      color: #9ca3af;
+      flex-shrink: 0;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .portal-item:hover .chevron {
+      color: var(--color-primary);
+      transform: translateX(3px);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="container">
+    <header>
+      <div class="brand">
+        <div class="logo-badge">
+          <i data-lucide="circle-dot-dashed" style="width: 22px; height: 22px;"></i>
+        </div>
+        <h1 class="brand-title" id="storeNameDisplay">Turma Tienda</h1>
+      </div>
+    </header>
+
+    <nav class="portal-nav" aria-label="Secciones de la tienda">
+      <!-- Cambia href="#" por las URLs de tus frontends -->
+      <a href="/la_ronda.html" class="portal-item">
+        <span class="prod-thumb"></span>
+        <div class="prod-info">
+          <span class="prod-name">La Ronda</span>
+          <span class="badge-stock">Productos de Elaboración Propia</span>
+        </div>
+        <i data-lucide="chevron-right" class="chevron" style="width: 20px; height: 20px;"></i>
+      </a>
+
+      <a href="/el_lleve.html" class="portal-item">
+        <span class="prod-thumb" style="background-color: #5c8324!important;"></span>
+        <div class="prod-info">
+          <span class="prod-name">El Lleve</span>
+          <span class="badge-stock">Productos para Comercialización</span>
+        </div>
+        <i data-lucide="chevron-right" class="chevron" style="width: 20px; height: 20px;"></i>
+      </a>
+
+      <a href="#" class="portal-item">
+        <span class="prod-thumb" style="background-color: #242683!important;"></span>
+        <div class="prod-info">
+          <span class="prod-name">Bioescencia</span>
+          <span class="badge-stock">Cosmética y Cuidado Personal</span>
+        </div>
+        <i data-lucide="chevron-right" class="chevron" style="width: 20px; height: 20px;"></i>
+      </a>
+
+      <a href="#" class="portal-item">
+        <span class="prod-thumb" style="background-color: #5a2483!important;"></span>
+        <div class="prod-info">
+          <span class="prod-name">Libros que Viajan</span>
+          <span class="badge-stock">Recirculación de libros</span>
+        </div>
+        <i data-lucide="chevron-right" class="chevron" style="width: 20px; height: 20px;"></i>
+      </a>
+    </nav>
+
+    <footer>
+      <span><i data-lucide="sprout" style="margin-bottom: -5px;width: 20px;color: #38761c94;"></i> Turma Tienda v1.0</span> 
+    </footer>
+  </main>
+
+  <script>
+    // Inicializar iconos de Lucide
+    lucide.createIcons();
+  </script>
+</body>
+</html>
