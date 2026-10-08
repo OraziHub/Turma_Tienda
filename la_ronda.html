@@ -28,7 +28,6 @@
       --font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     }
 
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -94,7 +93,7 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background:var(--color-primary);
+      background: var(--color-primary);
       color: #fff;
       display: flex;
       align-items: center;
@@ -288,6 +287,7 @@
       font-weight: 700;
       line-height: 1.25;
       display: -webkit-box;
+      -webkit-line-clamp: 2;
       line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
@@ -473,12 +473,14 @@
     .status-chip {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
       font-size: 0.75rem;
       font-weight: 700;
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: 999px;
       width: fit-content;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
     .status-pendiente { background: #fee2e2; color: #b91c1c; }
@@ -614,7 +616,6 @@
 <body>
   <div class="container">
     <header>
-      <!-- Botón de regreso a la pantalla de inicio principal -->
       <a href="index.html" class="btn-back" title="Volver al inicio" aria-label="Volver al inicio">
         <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i>
       </a>
@@ -697,7 +698,6 @@
   <input type="file" id="receiptFileInput" style="display:none;" accept="image/*,.pdf" />
 
   <script>
-    // PEGA AQUÍ LA URL DE TU IMPLEMENTACIÓN DE APPS SCRIPT
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbysUFfvVaIg3JJ9smJjHrqOwAXA3W7aPtbaiu_rza8xLu30HTpBPM9Zhx2C10C4G7Q4/exec"; 
     
     let state = {
@@ -755,10 +755,11 @@
       populateSelects();
       renderCategories();
       renderProducts();
+      renderOrders();
     }
 
     function formatImageUrl(url) {
-      const placeholder = 'https://placehold.co/100x100/dbf6e4/597928?';
+      const placeholder = 'https://placehold.co/100x100/dbf6e4/597928?text=Sin+Foto';
       if (!url) return placeholder;
       const cleanUrl = String(url).trim();
       if (!cleanUrl) return placeholder;
@@ -772,10 +773,25 @@
     }
 
     function populateSelects() {
+      const currComp = selectComprador.value;
       selectComprador.innerHTML = '<option value="" disabled selected>Vendedor...</option>';
-      state.compradores.forEach(c => selectComprador.innerHTML += `<option value="${c}">${c}</option>`);
+      state.compradores.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        if (c === currComp) opt.selected = true;
+        selectComprador.appendChild(opt);
+      });
+
+      const currRet = selectRetiro.value;
       selectRetiro.innerHTML = '<option value="" disabled selected>Punto de Retiro...</option>';
-      state.puntosRetiro.forEach(p => selectRetiro.innerHTML += `<option value="${p}">${p}</option>`);
+      state.puntosRetiro.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        if (p === currRet) opt.selected = true;
+        selectRetiro.appendChild(opt);
+      });
     }
 
     function renderCategories() {
@@ -848,7 +864,6 @@
 
     // Registro de Pedido
     document.getElementById('btnSubmit').addEventListener('click', async () => {
-      // 1. Extraer los items preservando su cantidad antes de resetear contadores
       const itemsComprados = state.productos
         .filter(p => p.cant > 0)
         .map(p => ({
@@ -878,7 +893,6 @@
       document.getElementById('btnSubmitText').textContent = 'Enviando...';
       document.getElementById('btnSubmit').disabled = true;
 
-      // 2. Construir detalle del Modal con las cantidades intactas
       const itemsDetalle = itemsComprados.map(p => 
         `• <strong>${p.cantidad}x</strong> ${p.nombre} ($${(p.cantidad * p.precio).toLocaleString('es-AR')})`
       ).join('<br>');
@@ -893,7 +907,6 @@
         <strong style="color:var(--color-primary); font-size:1.05rem;">Total: $${total.toLocaleString('es-AR')}</strong>
       `;
 
-      // 3. Generar mensaje de WhatsApp
       const itemsWa = itemsComprados.map(p => ` - *${p.cantidad}x* ${p.nombre} ($${(p.cantidad * p.precio).toLocaleString('es-AR')})`).join('\n');
       const msgWa = `*${state.nombreTienda}* | *Pedido Registrado*%0A%0A` +
                     `*Nº Pedido:* ${orderId}%0A` +
@@ -904,7 +917,6 @@
       
       document.getElementById('btnWaLink').href = `https://wa.me/?text=${msgWa}`;
 
-      // 4. Descontar stock localmente y limpiar stepper
       itemsComprados.forEach(c => {
         const prod = state.productos.find(x => String(x.id) === String(c.id));
         if (prod) {
@@ -913,7 +925,6 @@
         }
       });
 
-      // 5. Agregar pedido al historial local
       state.pedidos.unshift({
         fecha: fecha,
         orderId: orderId,
@@ -925,13 +936,11 @@
         resumen: resumenStr
       });
 
-      // 6. Mostrar modal y refrescar la vista
       orderModal.classList.add('active');
       document.getElementById('btnSubmitText').textContent = 'Hacer Pedido';
       renderProducts();
       updateTotal();
 
-      // 7. Enviar datos al Apps Script
       try {
         await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
@@ -946,22 +955,27 @@
 
     document.getElementById('btnCloseOrderModal').onclick = () => orderModal.classList.remove('active');
 
-    // Gestión del Historial y Múltiples Comprobantes
+    // Reconocimiento flexible del estado de pago
     function getStatusChip(rawEstado) {
-      const est = String(rawEstado || "").trim().toLowerCase();
+      const est = String(rawEstado || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, ""); // Remueve tildes
+
       if (est.includes("entregado")) {
         return `<span class="status-chip status-entregado"><i data-lucide="package-check" style="width:12px;height:12px;"></i> Pedido Entregado</span>`;
-      }
-      if (est === "pagado") {
-        return `<span class="status-chip status-pagado"><i data-lucide="check-circle" style="width:12px;height:12px;"></i> Pagado</span>`;
       }
       if (est.includes("parcial")) {
         return `<span class="status-chip status-parcial"><i data-lucide="pie-chart" style="width:12px;height:12px;"></i> Pago Parcial</span>`;
       }
-      if (est.includes("proceso")) {
-        return `<span class="status-chip status-proceso"><i data-lucide="clock" style="width:12px;height:12px;"></i> Pedido en Proceso</span>`;
+      if (est.includes("pagad")) { // Coincide con 'pagado', 'PAGADO', 'pagada'
+        return `<span class="status-chip status-pagado"><i data-lucide="check-circle" style="width:12px;height:12px;"></i> Pagado</span>`;
       }
-      return `<span class="status-chip status-pendiente"><i data-lucide="alert-circle" style="width:12px;height:12px;"></i> Pendiente de Pago</span>`;
+      if (est.includes("proceso")) {
+        return `<span class="status-chip status-proceso"><i data-lucide="clock" style="width:12px;height:12px;"></i> En Proceso</span>`;
+      }
+      return `<span class="status-chip status-pendiente"><i data-lucide="alert-circle" style="width:12px;height:12px;"></i> ${rawEstado || 'Pendiente de Pago'}</span>`;
     }
 
     function renderOrders() {
@@ -1009,7 +1023,6 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    // Subida de Comprobantes
     window.triggerReceiptUpload = function(orderId) {
       pendingUploadOrderId = orderId;
       receiptFileInput.value = '';
@@ -1041,12 +1054,8 @@
         const json = await res.json();
 
         if (json && json.status === 'success') {
-          const ord = state.pedidos.find(p => String(p.orderId) === String(orderId));
-          if (ord) {
-            ord.comprobanteUrl = ord.comprobanteUrl ? ord.comprobanteUrl + "," + json.fileUrl : json.fileUrl;
-          }
           alert("¡Comprobante adjuntado con éxito!");
-          renderOrders();
+          await fetchSheetData();
         } else {
           throw new Error();
         }
@@ -1066,7 +1075,7 @@
       });
     }
 
-    // Navegación de pestañas PRODUCTOS y PEDIDOS
+    // Pestañas
     document.getElementById('tabCatalogBtn').onclick = () => {
       document.getElementById('tabCatalogBtn').classList.add('active');
       document.getElementById('tabOrdersBtn').classList.remove('active');
@@ -1082,6 +1091,7 @@
       document.getElementById('paneCatalog').classList.remove('active');
       document.getElementById('summaryCard').style.display = 'none';
       renderOrders();
+      fetchSheetData(); // Consulta la hoja para traer los estados modificados
     };
 
     if (window.lucide) lucide.createIcons();
