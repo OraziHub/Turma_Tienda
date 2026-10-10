@@ -869,7 +869,7 @@
         orderId: orderId,
         comprador: selectComprador.value,
         retiro: selectRetiro.value,
-        resumen: resumenStr,
+        detalle: resumenStr,
         items: itemsComprados.map(p => ({ id: p.id, nombre: p.nombre, cantidad: p.cantidad }))
       };
 
@@ -987,8 +987,7 @@
             </div>
             <div class="order-item-total">$ ${Number(p.total).toLocaleString('es-AR')}</div>
           </div>
-          <div style="font-size:0.85rem; color:var(--color-text-muted);">${p.resumen || ''}</div>
-          
+            <div style="font-size:0.85rem; color:var(--color-text-muted);">${p.detalle || p.resumen || ''}</div>          
           <div class="receipt-upload-box">
             <a href="https://mercadopago.com" target="_blank" class="mp-btn">
               <i data-lucide="credit-card" style="width:13px;height:13px;"></i> Pagar Pedido
