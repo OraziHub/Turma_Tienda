@@ -677,7 +677,7 @@
   <!-- Modal de Pedido Registrado -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal">
-      <h3 class="modal-title"><i data-lucide="check-circle" style="width:24px;height:24px;"></i> Pedido registrado</h3>
+      <h3 class="modal-title"><i data-lucide="check-circle" style="width:24px;height:24px;"></i> Pedido Registrado</h3>
       <div class="modal-detail-box" id="modalDetail"></div>
       
       <a href="#" id="btnWaLink" target="_blank" class="btn-wa-action">
@@ -688,7 +688,7 @@
         <i data-lucide="credit-card" style="width:18px;height:18px;"></i> Pagar Pedido
       </a>
 
-      <button type="button" class="btn-close-modal" id="btnCloseOrderModal">Cerrar y Continuar</button>
+      <button type="button" class="btn-close-modal" id="btnCloseOrderModal">Cerrar</button>
     </div>
   </div>
   
@@ -989,8 +989,8 @@
           </div>
             <div style="font-size:0.85rem; color:var(--color-text-muted);">${p.detalle || p.resumen || ''}</div>          
           <div class="receipt-upload-box">
-            <a href="https://mercadopago.com" target="_blank" class="mp-btn">
-              <i data-lucide="credit-card" style="width:13px;height:13px;"></i> Pagar Pedido
+            <a href="mercadopago://"" target="_blank" class="mp-btn">
+              <i data-lucide="smartphone" style="width:13px;height:13px;"></i> Pagar Pedido
             </a>
             
             ${chipsComprobantes}
